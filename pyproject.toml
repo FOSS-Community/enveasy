@@ -1,0 +1,23 @@
+[project]
+name = "enveasy"
+version = "0.1.0"
+description = "Easily manage env's"
+authors = [
+    {name = "Kanishk Pachauri", email = "itskanishkp.py@gmail.com"},
+]
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.7.0",
+    "tomli>=2.0.1",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.pdm]
+package-type = "library"
