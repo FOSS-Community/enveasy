@@ -1,7 +1,8 @@
 from configparser import ConfigParser
 import toml
 import os
-from enveasy import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
+from enveasy.config import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
+
 
 def init_enveasy():
     config = ConfigParser()
