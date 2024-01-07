@@ -22,3 +22,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.pdm]
 package-type = "library"
+
+[tool.enveasy]
+GITHUB_TOKEN = [ "It is for Github Token which is used for github api", "www.github.com/api",]
+TEST = [ "This is the variable for test enviroment", "WRITE the value 'yes' if you want to run in test env else 'no'",]
