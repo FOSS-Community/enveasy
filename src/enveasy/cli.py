@@ -4,12 +4,13 @@ from pathlib import Path
 from enveasy.utils import init_enveasy, add_enveasy, export_variable_data, setup_env, export_env_example
 from rich import print
 from rich.prompt import Prompt
+from enveasy.config import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE
 app = typer.Typer()
 
 
 @app.command()
 def init():
-    path = os.path.join(os.getcwd(), "enveasy.toml")
+    path = os.path.join(os.getcwd(), DEFAULT_TOML_FILE)
     if os.path.exists(path):
         print(
             "[bold red]enveasy.toml already exists[/bold red], use [bold yellow] enveasy add [/bold yellow] to add enviroment variables")
@@ -25,7 +26,7 @@ def init():
 
 @app.command()
 def add():
-    path = os.path.join(os.getcwd(), "enveasy.toml")
+    path = os.path.join(os.getcwd(), DEFAULT_TOML_FILE)
     if not os.path.exists(path):
         print(
             "[bold red]enveasy is not initialize :see_no_evil:[/bold red], use [bold yellow] enveasy init [/bold yellow] to initalize enveasy")
@@ -45,9 +46,9 @@ def add():
 
 @app.command()
 def set():
-    path = os.path.join(os.getcwd(), ".env")
+    path = os.path.join(os.getcwd(), DEFAULT_ENV_FILE)
     if not os.path.exists(path):
-        with open(".env", 'w') as f:
+        with open(DEFAULT_ENV_FILE, 'w') as f:
             f.write("")
     environment_var_data = export_variable_data()
     for i in environment_var_data:

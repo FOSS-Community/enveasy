@@ -1,19 +1,19 @@
 from configparser import ConfigParser
 import toml
 import os
-
+from enveasy import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
 
 def init_enveasy():
     config = ConfigParser()
     config["tool.enveasy"] = {
     }
-    with open("enveasy.toml", "w") as f:
+    with open(DEFAULT_TOML_FILE, "w") as f:
         config.write(f)
 
 
 def add_enveasy(variable_name, variable_description, variable_help):
     # Path to your TOML file
-    file_path = 'enveasy.toml'
+    file_path = DEFAULT_TOML_FILE
 
     # Read the existing TOML file
     with open(file_path, 'r') as file:
@@ -35,7 +35,7 @@ def add_enveasy(variable_name, variable_description, variable_help):
 def export_variable_data():
 
     # Path to your TOML file
-    file_path = 'enveasy.toml'
+    file_path = DEFAULT_TOML_FILE
 
     # Read the TOML file
     with open(file_path, 'r') as file:
@@ -61,10 +61,10 @@ def export_variable_data():
 
 
 def setup_env(variable_name, variable_value):
-    with open(".env", "a") as f:
+    with open(DEFAULT_ENV_FILE, "a") as f:
         f.write(f'{variable_name}="{variable_value}"\n')
 
 
 def export_env_example(variable_name, variable_description):
-    with open(".env_example", "a") as f:
+    with open(DEFAULT_EXPORT_FILE, "a") as f:
         f.write(f'{variable_name}="{variable_description}"\n')
