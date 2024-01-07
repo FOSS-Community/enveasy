@@ -4,17 +4,35 @@ import os
 from enveasy.config import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
 
 
-def init_enveasy():
+def pyproject_toml_exists():
+    pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
+    if os.path.exists(pyproject_path):
+        return True
+    return False
+
+
+def find_toml_file():
+    enveasy_toml_path = os.path.join(os.getcwd(), DEFAULT_TOML_FILE)
+    if pyproject_toml_exists():
+        pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
+        data = toml.load(pyproject_path)
+        if "tool" in data and "enveasy" in data["tool"]:
+            return "pyproject.toml"
+    if os.path.exists(enveasy_toml_path):
+        return DEFAULT_TOML_FILE
+    return None
+
+
+def init_enveasy(file_path=DEFAULT_TOML_FILE):
     config = ConfigParser()
     config["tool.enveasy"] = {
     }
-    with open(DEFAULT_TOML_FILE, "w") as f:
+    with open(file_path, "w") as f:
         config.write(f)
 
 
-def add_enveasy(variable_name, variable_description, variable_help):
+def add_enveasy(variable_name, variable_description, variable_help, file_path=DEFAULT_TOML_FILE):
     # Path to your TOML file
-    file_path = DEFAULT_TOML_FILE
 
     # Read the existing TOML file
     with open(file_path, 'r') as file:
