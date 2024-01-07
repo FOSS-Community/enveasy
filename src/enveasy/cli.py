@@ -33,7 +33,11 @@ def add():
         raise typer.Exit()
     else:
         while True:
-            variable_name = Prompt.ask("Enter your variable name :sunglasses:")
+            variable_name = ""
+            while not variable_name:
+                variable_name = Prompt.ask("Enter your variable name :sunglasses:")
+                if variable_name == "":
+                    print("[bold red]Please enter a variable name[/bold red]")
             variable_description = Prompt.ask(
                 "Enter your variable description :sunglasses:")
             variable_help = Prompt.ask(
