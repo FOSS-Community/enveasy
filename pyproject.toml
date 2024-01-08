@@ -16,5 +16,9 @@ build-backend = "setuptools.build_meta"
 [project.license]
 text = "MIT"
 
+[project.scripts]
+enveasy = "enveasy:app"
+
 [tool.pdm]
 package-type = "library"
+
