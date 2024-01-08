@@ -95,10 +95,37 @@ def export_variable_data(file_path=find_initialised_toml_file()):
 
 
 def setup_env(variable_name, variable_value):
-    with open(DEFAULT_ENV_FILE, "a") as f:
-        f.write(f'{variable_name}="{variable_value}"\n')
+    env_file_path = DEFAULT_ENV_FILE
+    # Read existing lines from the environment file
+    with open(env_file_path, 'r') as f:
+        lines = f.readlines()
+    # Check if the variable_name already exists in the file
+    variable_exists = any(line.startswith(
+        f"{variable_name}=") for line in lines)
+    # If the variable_name exists, replace the existing line; otherwise, add a new line
+    if variable_exists:
+        updated_lines = [f"{variable_name}={variable_value}\n" if line.startswith(
+            f"{variable_name}=") else line for line in lines]
+    else:
+        updated_lines = lines + [f"{variable_name}={variable_value}\n"]
+    # Write the updated lines back to the environment file
+    with open(env_file_path, 'w') as f:
+        f.writelines(updated_lines)
 
 
 def export_env_example(variable_name, variable_description):
-    with open(DEFAULT_EXPORT_FILE, "a") as f:
-        f.write(f'{variable_name}="{variable_description}"\n')
+    export_file = DEFAULT_EXPORT_FILE
+    with open(export_file, 'r') as f:
+        lines = f.readlines()
+    # Check if the variable_name already exists in the file
+    variable_exists = any(line.startswith(
+        f"{variable_name}=") for line in lines)
+    # If the variable_name exists, replace the existing line; otherwise, add a new line
+    if variable_exists:
+        updated_lines = [f"{variable_name}={variable_description}\n" if line.startswith(
+            f"{variable_name}=") else line for line in lines]
+    else:
+        updated_lines = lines + [f"{variable_name}={variable_description}\n"]
+    # Write the updated lines back to the environment file
+    with open(export_file, 'w') as f:
+        f.writelines(updated_lines)

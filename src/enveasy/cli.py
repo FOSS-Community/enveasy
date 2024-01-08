@@ -70,7 +70,16 @@ def set(env_file=DEFAULT_ENV_FILE):
         print("Description: ", i[1])
         print("Help: ", i[2])
         value = input(f"Please Enter the Value of {i[0]}: ")
+        if value.isdigit():
+            value = int(value)
+        elif value.lower() == "true":
+            value = True
+        elif value.lower() == "false":
+            value = False
+        else:
+            value = str("\""+value+"\"")
         setup_env(i[0], value)
+    print(f"[bold green]Done setting[/bold green][yellow] {DEFAULT_ENV_FILE} [/yellow] :sparkles:,")
 
 
 @app.command()
