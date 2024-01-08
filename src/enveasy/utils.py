@@ -2,33 +2,51 @@ from configparser import ConfigParser
 import toml
 import os
 from enveasy.config import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
+from rich import print
 
 
 def pyproject_toml_exists():
+    """
+    Check if pyproject.toml exists in root directory of project
+    """
     pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
     if os.path.exists(pyproject_path):
         return True
     return False
 
 
-def find_toml_file():
+def find_initialised_toml_file():
+    """
+    Used to find the toml file, if enveasy.toml exists, then it will be used, else if pyproject.toml exists, then it will be used, else None will be returned
+    Also gives information if project is initialised or not
+    """
     enveasy_toml_path = os.path.join(os.getcwd(), DEFAULT_TOML_FILE)
+    if os.path.exists(enveasy_toml_path):
+        return DEFAULT_TOML_FILE
     if pyproject_toml_exists():
         pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
         data = toml.load(pyproject_path)
         if "tool" in data and "enveasy" in data["tool"]:
             return "pyproject.toml"
-    if os.path.exists(enveasy_toml_path):
-        return DEFAULT_TOML_FILE
     return None
 
 
 def init_enveasy(file_path=DEFAULT_TOML_FILE):
+    if file := find_initialised_toml_file():
+        print(
+            "[bold red]enveasy is already initialized :see_no_evil:[/bold red], use [bold yellow] enveasy add [/bold yellow] to add enviroment variables")
+        print(
+            f"enveasy is already initialized in \"{file}\"")
+        exit(1)
     config = ConfigParser()
     config["tool.enveasy"] = {
     }
-    with open(file_path, "w") as f:
-        config.write(f)
+    if file_path == "pyproject.toml":
+        with open(file_path, "a") as f:
+            config.write(f)
+    else:
+        with open(file_path, "w") as f:
+            config.write(f)
 
 
 def add_enveasy(variable_name, variable_description, variable_help, file_path=DEFAULT_TOML_FILE):
@@ -51,10 +69,7 @@ def add_enveasy(variable_name, variable_description, variable_help, file_path=DE
         toml.dump(data, file)
 
 
-def export_variable_data():
-
-    # Path to your TOML file
-    file_path = DEFAULT_TOML_FILE
+def export_variable_data(file_path=find_initialised_toml_file()):
 
     # Read the TOML file
     with open(file_path, 'r') as file:
