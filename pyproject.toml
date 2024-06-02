@@ -20,5 +20,5 @@ text = "MIT"
 enveasy = "enveasy:app"
 
 [tool.pdm]
-package-type = "library"
+distribution = true
 
