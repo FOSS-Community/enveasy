@@ -1,19 +1,56 @@
 from configparser import ConfigParser
 import toml
 import os
+from enveasy.config import DEFAULT_ENV_FILE, DEFAULT_TOML_FILE, DEFAULT_EXPORT_FILE
+from rich import print
 
 
-def init_enveasy():
+def pyproject_toml_exists():
+    """
+    Check if pyproject.toml exists in root directory of project
+    """
+    pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
+    if os.path.exists(pyproject_path):
+        return True
+    return False
+
+
+def find_initialised_toml_file():
+    """
+    Used to find the toml file, if enveasy.toml exists, then it will be used, else if pyproject.toml exists, then it will be used, else None will be returned
+    Also gives information if project is initialised or not
+    """
+    enveasy_toml_path = os.path.join(os.getcwd(), DEFAULT_TOML_FILE)
+    if os.path.exists(enveasy_toml_path):
+        return DEFAULT_TOML_FILE
+    if pyproject_toml_exists():
+        pyproject_path = os.path.join(os.getcwd(), "pyproject.toml")
+        data = toml.load(pyproject_path)
+        if "tool" in data and "enveasy" in data["tool"]:
+            return "pyproject.toml"
+    return None
+
+
+def init_enveasy(file_path=DEFAULT_TOML_FILE):
+    if file := find_initialised_toml_file():
+        print(
+            "[bold red]enveasy is already initialized :see_no_evil:[/bold red], use [bold yellow] enveasy add [/bold yellow] to add enviroment variables")
+        print(
+            f"enveasy is already initialized in \"{file}\"")
+        exit(1)
     config = ConfigParser()
     config["tool.enveasy"] = {
     }
-    with open("enveasy.toml", "w") as f:
-        config.write(f)
+    if file_path == "pyproject.toml":
+        with open(file_path, "a") as f:
+            config.write(f)
+    else:
+        with open(file_path, "w") as f:
+            config.write(f)
 
 
-def add_enveasy(variable_name, variable_description, variable_help):
+def add_enveasy(variable_name, variable_description, variable_help, file_path=DEFAULT_TOML_FILE):
     # Path to your TOML file
-    file_path = 'enveasy.toml'
 
     # Read the existing TOML file
     with open(file_path, 'r') as file:
@@ -32,10 +69,7 @@ def add_enveasy(variable_name, variable_description, variable_help):
         toml.dump(data, file)
 
 
-def export_variable_data():
-
-    # Path to your TOML file
-    file_path = 'enveasy.toml'
+def export_variable_data(file_path=find_initialised_toml_file()):
 
     # Read the TOML file
     with open(file_path, 'r') as file:
@@ -61,10 +95,37 @@ def export_variable_data():
 
 
 def setup_env(variable_name, variable_value):
-    with open(".env", "a") as f:
-        f.write(f'{variable_name}="{variable_value}"\n')
+    env_file_path = DEFAULT_ENV_FILE
+    # Read existing lines from the environment file
+    with open(env_file_path, 'r') as f:
+        lines = f.readlines()
+    # Check if the variable_name already exists in the file
+    variable_exists = any(line.startswith(
+        f"{variable_name}=") for line in lines)
+    # If the variable_name exists, replace the existing line; otherwise, add a new line
+    if variable_exists:
+        updated_lines = [f"{variable_name}={variable_value}\n" if line.startswith(
+            f"{variable_name}=") else line for line in lines]
+    else:
+        updated_lines = lines + [f"{variable_name}={variable_value}\n"]
+    # Write the updated lines back to the environment file
+    with open(env_file_path, 'w') as f:
+        f.writelines(updated_lines)
 
 
 def export_env_example(variable_name, variable_description):
-    with open(".env_example", "a") as f:
-        f.write(f'{variable_name}="{variable_description}"\n')
+    export_file = DEFAULT_EXPORT_FILE
+    with open(export_file, 'r') as f:
+        lines = f.readlines()
+    # Check if the variable_name already exists in the file
+    variable_exists = any(line.startswith(
+        f"{variable_name}=") for line in lines)
+    # If the variable_name exists, replace the existing line; otherwise, add a new line
+    if variable_exists:
+        updated_lines = [f"{variable_name}={variable_description}\n" if line.startswith(
+            f"{variable_name}=") else line for line in lines]
+    else:
+        updated_lines = lines + [f"{variable_name}={variable_description}\n"]
+    # Write the updated lines back to the environment file
+    with open(export_file, 'w') as f:
+        f.writelines(updated_lines)
